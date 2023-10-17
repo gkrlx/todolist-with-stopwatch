@@ -1,6 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
 from time import strftime
+import tkinter as Tkinter 
+from datetime import datetime
+
 
 def newTask():
     task = my_entry.get()
@@ -14,8 +17,8 @@ def deleteTask():
     lb.delete(ANCHOR)
     
 ws = Tk()
-ws.geometry('1000x600+500+200')
-ws.title('PythonGuides')
+ws.geometry('500x600+500+200')
+ws.title('ToDo List')
 ws.config(bg='#223441')
 ws.resizable(width=False, height=False)
 
@@ -55,7 +58,7 @@ my_entry = Entry(
     font=('times', 24)
     )
 
-my_entry.pack(pady=20)#-----여기까지함!!!!!!!!!!!!!!!!!!!!!!!
+my_entry.pack(pady=20)
 
 button_frame = Frame(ws)
 button_frame.pack(pady=20)
@@ -82,20 +85,87 @@ delTask_btn = Button(
 )
 delTask_btn.pack(fill=BOTH, expand=True, side=LEFT)
 
+
 #CLOCK
-root = Tk()
-root.title('Clock')
+
 
 def time():
     string = strftime('%H:%M:%S %p') 
     lbl.config(text=string)
     lbl.after(1000, time)
  
-lbl = Label(root, font=('calibri', 40, 'bold'),
+lbl = Label(ws, font=('calibri', 40, 'bold'),
             background='white',
             foreground='black')
  
-lbl.pack(anchor='center')
+lbl.pack(side=TOP)
+
+
+#스톱워치
+counter = 54000
+running = False
+def counter_label(label): 
+    def count(): 
+        if running: 
+            global counter 
+
+            if counter==54000:             
+                display="Starting..."
+            else:
+                tt = datetime.fromtimestamp(counter)
+                string = tt.strftime("%H:%M:%S")
+                display=string 
+   
+            label['text']=display   
+            label.after(1000, count)  
+            counter += 1
+   
+    count()      
+   
+
+def Start(label): 
+    global running 
+    running=True
+    counter_label(label) 
+    start['state']='disabled'
+    stop['state']='normal'
+    reset['state']='normal'
+
+def Stop(): 
+    global running 
+    start['state']='normal'
+    stop['state']='disabled'
+    reset['state']='normal'
+    running = False
+
+def Reset(label): 
+    global counter 
+    counter=54000
+   
+
+    if running==False:       
+        reset['state']='disabled'
+        label['text']='Welcome!'
+   
+
+    else:                
+        label['text']='Starting...'
+   
+
+   
+
+ws.minsize(width=250, height=70) 
+label = Tkinter.Label(ws, text="START!", fg="black", font="Verdana 30 bold") 
+label.pack() 
+f = Tkinter.Frame(ws)
+start = Tkinter.Button(f, text='Start', width=6, command=lambda:Start(label)) 
+stop = Tkinter.Button(f, text='Stop',width=6,state='disabled', command=Stop) 
+reset = Tkinter.Button(f, text='Reset',width=6, state='disabled', command=lambda:Reset(label)) 
+f.pack(anchor = 'center',pady=5)
+start.pack(side="left") 
+stop.pack(side ="left") 
+reset.pack(side="left")
+
 time()
 ws.mainloop()
 mainloop()
